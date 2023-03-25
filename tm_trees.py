@@ -350,6 +350,18 @@ class TMTree:
         'C | C2 | C1(5) None'
         """
         # TODO: (Task 1)  Implement this method
+        return self.get_path_string_helper()
+
+    def get_path_string_helper(self, string: str = "") -> str:
+
+        if string == "":
+            string += f"{self._name}({self.data_size}) {self.rect}"
+        else:
+            string = f"{self._name}{self.get_separator()}" + string
+        if self._parent_tree is not None:
+            string = self._parent_tree.get_path_string_helper(string)
+        return string
+
 
     # Note: you may encounter an "R0201 (no self use error)" pyTA error related
     # to this method (and PyCharm might show a warning as well), but it should
