@@ -25,6 +25,7 @@ of several subclasses to represent specific types of data.
 from __future__ import annotations
 import os
 import math  # You can remove this math import if you don't end up using it.
+import random
 from random import randint
 from typing import Optional
 import webbrowser
@@ -298,7 +299,24 @@ class TMTree:
         >>> t2.data_size
         6
         """
-        # TODO: (Task 1) Implement this method
+        self._name = name
+        self._colour = tuple([randint(0, 255), randint(0, 255),
+                             randint(0, 255)])
+        self._subtrees = subtrees
+
+        subtree_size = 0
+        for tree in self._subtrees:
+            tree._parent_tree = self
+            subtree_size += tree.data_size
+        self.data_size = data_size + subtree_size
+
+        if self._subtrees:
+            self._expanded = True
+        else:
+            self._expanded = False
+
+        self.rect = None
+        self._parent_tree = None
 
     def is_displayed_tree_leaf(self) -> bool:
         """
