@@ -331,7 +331,10 @@ class TMTree:
         >>> t2.is_displayed_tree_leaf()
         False
         """
-        # TODO: (Task 1) Implement this method
+        if self._parent_tree is None:
+            return not self._expanded
+        else:
+            return not self._expanded and self._parent_tree._expanded
 
     # Methods for the string representation
     def get_path_string(self) -> str:
@@ -349,7 +352,6 @@ class TMTree:
         >>> d1.get_path_string()
         'C | C2 | C1(5) None'
         """
-        # TODO: (Task 1)  Implement this method
         return self.get_path_string_helper()
 
     def get_path_string_helper(self, string: str = "") -> str:
@@ -449,7 +451,28 @@ class TMTree:
         >>> t3.rect
         (0, 0, 100, 200)
         """
-        # TODO: (Task 2) Implement this method
+        self.rect = rect
+        subtrees = self._subtrees
+        if not subtrees:
+            return
+        else:
+            count = 0
+            for tree in subtrees:
+                count += tree.data_size
+            coord1 = rect[0]
+            coord2 = rect[0]
+            sizex = rect[2]
+            sizey = rect[3]
+            if sizex > sizey:
+                for tree in subtrees:
+                    tree.update_rectangles(tuple([coord1, coord2, int(sizex
+                                      * (tree.data_size/count)), sizey]))
+                    coord1 += int(sizex * (tree.data_size/count))
+            else:
+                for tree in subtrees:
+                    tree.update_rectangles(tuple([coord1, coord2, sizex, int(sizey
+                                       * (tree.data_size/count))]))
+                    coord2 += int(sizey * (tree.data_size/count))
 
     def get_rectangles(self) -> list[tuple[tuple[int, int, int, int],
                                            tuple[int, int, int]]]:
@@ -473,7 +496,17 @@ class TMTree:
         >>> rectangles[1][0]
         (0, 50, 100, 150)
         """
-        # TODO: (Task 2) Implement this method
+        leaf_lst = []
+        if self.rect is not None:
+            if not self._expanded:
+                t = (self.rect, self._colour)
+                leaf_lst.append(t)
+            else:
+                for tree in self._subtrees:
+                    if tree.get_rectangles():
+                        leaf_lst.extend(tree.get_rectangles())
+        return leaf_lst
+
 
     def get_tree_at_position(self, pos: tuple[int, int]) -> Optional[TMTree]:
         """
