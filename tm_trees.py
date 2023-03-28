@@ -656,7 +656,13 @@ class TMTree:
         >>> d2.is_displayed_tree_leaf()
         True
         """
-        # TODO: (Task 4) Implement this method
+        self._parent_tree._expanded = False
+        for subtree in self._parent_tree._subtrees:
+            if subtree._subtrees:
+                for subtree1 in subtree._subtrees:
+                    subtree1.collapse()
+
+        return self._parent_tree
 
     def collapse_all(self) -> TMTree:
         """
@@ -680,7 +686,11 @@ class TMTree:
         >>> d3.is_displayed_tree_leaf()
         True
         """
-        # TODO: (Task 4) Implement this method
+        root = self
+        while root._parent_tree._parent_tree is not None:
+            root = root._parent_tree
+        root.collapse()
+        return root._parent_tree
 
     def move(self, destination: TMTree) -> None:
         """
