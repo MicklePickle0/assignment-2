@@ -507,7 +507,6 @@ class TMTree:
                         leaf_lst.extend(tree.get_rectangles())
         return leaf_lst
 
-
     def get_tree_at_position(self, pos: tuple[int, int]) -> Optional[TMTree]:
         """
         Return the leaf in the displayed-tree rooted at this tree whose
@@ -542,7 +541,18 @@ class TMTree:
         >>> t3.get_tree_at_position((100, 100)) is s2
         True
         """
-        # TODO: (Task 3) Implement this method
+        if pos[0] < self.rect[0] or pos[1] < self.rect[1] \
+                or pos[0] > self.rect[0] + self.rect[2] \
+                or pos[1] > self.rect[1] + self.rect[3]:
+            return None
+        else:
+            if self._subtrees:
+                for tree in self._subtrees:
+                    position = tree.get_tree_at_position(pos)
+                    if position is not None:
+                        return tree
+
+            return self
 
     # TODO: (Task 4) Write the bodies of methods expand, expand_all, collapse,
     #       collapse_all, move, change_size, and test the displayed-tree
