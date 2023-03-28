@@ -217,22 +217,29 @@ class TestDisplayedTreeLeaf:
         assert rectangles[1][0] == (0, 50, 100, 150)
 
     def test_get_rectangles_nested_subtrees(self) -> None:
-        ss2 = TMTree('k', [], 5)
+        ss2 = TMTree('k', [], 10)
         ss1 = TMTree('j', [], 10)
-        s5 = TMTree('i', [], 2)
-        s4 = TMTree('h', [], 4)
-        s3 = TMTree('g', [], 4)
+        s5 = TMTree('i', [], 3)
+        s4 = TMTree('h', [], 6)
+        s3 = TMTree('g', [], 6)
         s2 = TMTree('f', [], 5)
         s1 = TMTree('e', [ss1, ss2], 20)
 
         t4 = TMTree('d', [], 10)
         t3 = TMTree('c', [s3, s4, s5], 15)
-        t2 = TMTree('b', [s1, s2], 30)
+        t2 = TMTree('b', [s1, s2], 25)
         t1 = TMTree('a', [t2, t3, t4], 55)
 
         t1.update_rectangles((0, 0, 55, 30))
         rectangles = t1.get_rectangles()
         assert len(rectangles) == 7
+        print(rectangles[0][0])
+        print(rectangles[1][0])
+        print(rectangles[2][0])
+        print(rectangles[3][0])
+        print(rectangles[4][0])
+        print(rectangles[5][0])
+        print(rectangles[6][0])
 
         assert rectangles[0][0] == (0, 0, 20, 24)
         assert rectangles[1][0] == (20, 0, 10, 24)
