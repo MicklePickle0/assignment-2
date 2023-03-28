@@ -500,9 +500,9 @@ class TMTree:
                 t = (self.rect, self._colour)
                 leaf_lst.append(t)
             else:
-                for tree in self._subtrees:
-                    if tree.get_rectangles():
-                        leaf_lst.extend(tree.get_rectangles())
+                for subtree in self._subtrees:
+                    if subtree.get_rectangles():
+                        leaf_lst.extend(subtree.get_rectangles())
         return leaf_lst
 
     def get_tree_at_position(self, pos: tuple[int, int]) -> Optional[TMTree]:
