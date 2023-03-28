@@ -453,26 +453,24 @@ class TMTree:
         """
         self.rect = rect
         subtrees = self._subtrees
-        if not subtrees:
-            return
-        else:
+        if subtrees:
             count = 0
-            for tree in subtrees:
-                count += tree.data_size
+            for subtree in subtrees:
+                count += subtree.data_size
             coord1 = rect[0]
-            coord2 = rect[0]
+            coord2 = rect[1]
             sizex = rect[2]
             sizey = rect[3]
             if sizex > sizey:
-                for tree in subtrees:
-                    tree.update_rectangles(tuple([coord1, coord2, int(sizex
-                                      * (tree.data_size/count)), sizey]))
-                    coord1 += int(sizex * (tree.data_size/count))
+                for subtree in subtrees:
+                    subtree.update_rectangles(tuple([coord1, coord2, int(sizex
+                                                                         * (subtree.data_size / count)), sizey]))
+                    coord1 += int(sizex * (subtree.data_size / count))
             else:
-                for tree in subtrees:
-                    tree.update_rectangles(tuple([coord1, coord2, sizex, int(sizey
-                                       * (tree.data_size/count))]))
-                    coord2 += int(sizey * (tree.data_size/count))
+                for subtree in subtrees:
+                    subtree.update_rectangles(tuple([coord1, coord2, sizex, int(sizey
+                                                                                * (subtree.data_size / count))]))
+                    coord2 += int(sizey * (subtree.data_size / count))
 
     def get_rectangles(self) -> list[tuple[tuple[int, int, int, int],
                                            tuple[int, int, int]]]:
@@ -583,7 +581,11 @@ class TMTree:
         >>> s1.is_displayed_tree_leaf()
         True
         """
-        # TODO: (Task 4) Implement this method
+        if self._subtrees:
+            self._expanded = True
+            return self._subtrees[0]
+        else:
+            return self
 
     def expand_all(self) -> TMTree:
         """
@@ -617,7 +619,15 @@ class TMTree:
         >>> d2.is_displayed_tree_leaf()
         False
         """
-        # TODO: (Task 4) Implement this method
+        self._expanded = True
+        last = self
+
+        if self._subtrees:
+            for tree in self._subtrees:
+                last = tree.expand_all()
+
+        last._expanded = False
+        return last
 
     def collapse(self) -> TMTree:
         """
