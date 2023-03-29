@@ -548,7 +548,7 @@ class TMTree:
                 for tree in self._subtrees:
                     position = tree.get_tree_at_position(pos)
                     if position is not None:
-                        return tree
+                        return position
 
             return self
 
@@ -752,7 +752,26 @@ class TMTree:
         >>> s2.is_displayed_tree_leaf()
         True
         """
-        # TODO: (Task 4)  Implement this method
+        displaced_tree = self
+        self._parent_tree._subtrees.remove(self)
+        if self._parent_tree._subtrees:
+            self._parent_tree._expanded = True
+        else:
+            self._parent_tree._expanded = False
+        destination._subtrees.append(displaced_tree)
+        destination._expanded = True
+
+        parent_tree = self._parent_tree
+        while parent_tree._parent_tree is not None:
+            parent_tree.data_size -= displaced_tree.data_size
+            parent_tree = parent_tree._parent_tree
+
+        parent_tree = destination
+        while parent_tree._parent_tree is not None:
+            parent_tree.data_size += displaced_tree.data_size
+            parent_tree = parent_tree._parent_tree
+
+        parent_tree.update_rectangles(parent_tree.rect)
 
     def change_size(self, factor: float) -> None:
         """
@@ -807,7 +826,17 @@ class TMTree:
         >>> s2.rect
         (0, 100, 100, 100)
         """
-        # TODO: (Task 4) Implement this method
+        change = int(self.data_size*(factor))
+        self.data_size += change
+        if self.data_size == 0:
+            self.data_size = 1
+
+        parent_tree = self
+        while parent_tree._parent_tree is not None:
+            parent_tree = parent_tree._parent_tree
+            parent_tree.data_size += change
+
+        parent_tree.update_rectangles(parent_tree.rect)
 
 
 ######################
