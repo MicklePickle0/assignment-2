@@ -772,6 +772,7 @@ class TMTree:
 
         self._parent_tree._subtrees.remove(self)
         destination._subtrees.append(displaced_tree)
+        displaced_tree._parent_tree = destination
         destination._expanded = True
 
         parent_tree = destination
