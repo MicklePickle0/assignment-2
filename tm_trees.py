@@ -105,6 +105,7 @@ def path_to_nested_tuple(path: str) -> tuple[str, int | list]:
     >>> rslt[1]
     [('images', [('Cats.pdf', 17)]), ('reading.md', 7)]
     """
+
     # TODO: (Task 5) Implement this function
 
 
