@@ -35,7 +35,6 @@ def is_valid_colour(colour: Tuple[int, int, int]) -> bool:
 # TMTree testing
 ###########################################
 
-
 class TestTMTree:
     def test_init_doctest(self) -> None:
         t1 = TMTree('B', [], 5)
@@ -71,6 +70,11 @@ class TestTMTree:
 
 
 class TestDisplayedTreeLeaf:
+
+    ###########################################
+    # Task 1 Test Cases
+    ###########################################
+
     def test_is_displayed_tree_leaf_doctest(self) -> None:
         t1 = TMTree('B', [], 5)
         assert t1.is_displayed_tree_leaf()
@@ -141,6 +145,10 @@ class TestDisplayedTreeLeaf:
         d3 = TMTree('C', [d2], 1)
         assert d3.get_path_string() == 'C(7) None'
         assert d1.get_path_string() == 'C | C2 | C1(5) None'
+
+    ###########################################
+    # Task 2 Test Cases
+    ###########################################
 
     def test_update_rectangles_doctest(self) -> None:
         t1 = TMTree('B', [], 5)
@@ -237,6 +245,10 @@ class TestDisplayedTreeLeaf:
         assert rectangles[5][0] == (29, 24, 14, 6)
         assert rectangles[6][0] == (43, 0, 10, 30)
 
+    ###########################################
+    # Task 3 Test Cases
+    ###########################################
+
     def test_get_tree_at_position(self) -> None:
         # Create example trees
         t1 = TMTree('B', [], 5)
@@ -255,6 +267,10 @@ class TestDisplayedTreeLeaf:
         assert t2.get_tree_at_position((500, 500)) is None
         assert t3.get_tree_at_position((0, 0)) is s1
         assert t3.get_tree_at_position((100, 100)) is s2
+
+    ###########################################
+    # Task 4 Test Cases
+    ###########################################
 
     def test_expand(self) -> None:
         # Create example trees
