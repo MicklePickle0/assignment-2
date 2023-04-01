@@ -105,8 +105,19 @@ def path_to_nested_tuple(path: str) -> tuple[str, int | list]:
     >>> rslt[1]
     [('images', [('Cats.pdf', 17)]), ('reading.md', 7)]
     """
+    directory = ordered_listdir(path)
+    subitems = []
+    for filename in directory:
+        subitem = os.path.join(path, filename)
+        if os.path.isdir(subitem):
+            subitems.append(path_to_nested_tuple(subitem))
+        else:
+            subitems.append(tuple([os.path.basename(subitem), 1
+                            + os.path.getsize(subitem)]))
+    tuple_ = [os.path.basename(path), subitems]
+    tuple_ = tuple(tuple_)
+    return tuple_
 
-    # TODO: (Task 5) Implement this function
 
 
 def ordered_listdir(path: str) -> list[str]:
@@ -135,6 +146,13 @@ def dir_tree_from_nested_tuple(obj: tuple[str, int | list]) -> DirectoryTree:
 
     See the DirectoryTree's doctest examples for sample usage.
     """
+    for directory in obj:
+        if isinstance(directory[1], int):
+
+        else:
+            dir_tree_from_nested_tuple(directory)
+
+    return directory
     # TODO: (Task 5) Implement this function
 
 
