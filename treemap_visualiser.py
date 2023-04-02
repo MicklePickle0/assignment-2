@@ -406,7 +406,7 @@ if __name__ == '__main__':
     # Reminder, you are encouraged to modify this while trying out your code.
 
     RUN_OPTIONS = ['TMTree', 'DirectoryTree', 'ChessTree']
-    which = RUN_OPTIONS[0]
+    which = RUN_OPTIONS[1]
     # change the line above to choose which type of tree to visualize.
 
     if which == RUN_OPTIONS[0]:
