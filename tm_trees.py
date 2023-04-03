@@ -218,7 +218,30 @@ def moves_to_nested_dict(moves: list[list[str]]) -> dict[tuple[str,
     >>> d
     {('a', 0): {('b', 1): {('c', 1): {}}}, ('d', 0): {('e', 1): {('a', 1): {}}}}
     """
-    # TODO: (Task 6) Implement this function
+    if not moves:
+        return {}
+    else:
+        temp_dict = {}
+        dict_of_moves = {}
+        for lst in moves:
+            if not lst:
+                continue
+            if lst[0] not in temp_dict.keys():
+                temp_dict[lst[0]] = []
+            if len(lst) == 1:
+                temp_dict[lst[0]].append([])
+            else:
+                temp_dict[lst[0]].append(lst[1:])
+        for key, value in temp_dict.items():
+            count = 0
+            for lst in value:
+                if not lst:
+                    count += 1
+            dict_of_moves[tuple([key, count])] = value
+        for key, value in dict_of_moves.items():
+            dict_of_moves[key] = moves_to_nested_dict(value)
+
+        return dict_of_moves
 
 
 ########
