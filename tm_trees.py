@@ -1061,8 +1061,6 @@ class DirectoryTree(TMTree):
         return string
 
 
-
-
 class ChessTree(TMTree):
     """
     A chess tree representing sequences of moves in a collection of chess games
