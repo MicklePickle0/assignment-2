@@ -25,7 +25,6 @@ of several subclasses to represent specific types of data.
 from __future__ import annotations
 import os
 import math  # You can remove this math import if you don't end up using it.
-import random
 from random import randint
 from typing import Optional
 import webbrowser
@@ -226,7 +225,7 @@ def moves_to_nested_dict(moves: list[list[str]]) -> dict[tuple[str,
         for lst in moves:
             if not lst:
                 continue
-            if lst[0] not in temp_dict.keys():
+            if lst[0] not in temp_dict:
                 temp_dict[lst[0]] = []
             if len(lst) == 1:
                 temp_dict[lst[0]].append([])
@@ -398,16 +397,18 @@ class TMTree:
         >>> d1.get_path_string()
         'C | C2 | C1(5) None'
         """
-        return self.get_path_string_helper()
+        return self._get_path_string_helper()
 
-    def get_path_string_helper(self, string: str = "") -> str:
-
+    def _get_path_string_helper(self, string: str = "") -> str:
+        """
+        Helper method for get_path_string that returns a mutation of <string>
+        """
         if string == "":
             string += f"{self._name}({self.data_size}) {self.rect}"
         else:
             string = f"{self._name}{self.get_separator()}" + string
         if self._parent_tree is not None:
-            string = self._parent_tree.get_path_string_helper(string)
+            string = self._parent_tree._get_path_string_helper(string)
         return string
 
     # Note: you may encounter an "R0201 (no self use error)" pyTA error related
@@ -514,8 +515,9 @@ class TMTree:
             else:
                 for subtree in subtrees:
                     subtree.update_rectangles(tuple([coord1, coord2, sizex,
-                                                    math.floor(sizey *
-                                                               subtree.data_size
+                                                    math.floor(sizey
+                                                               * subtree.
+                                                               data_size
                                                                / count)]))
                     coord2 += math.floor(sizey * subtree.data_size / count)
 
@@ -710,7 +712,6 @@ class TMTree:
 
         return self
 
-
     def collapse_all(self) -> TMTree:
         """
         Collapse the entire displayed-tree to a single node (the root).
@@ -876,9 +877,9 @@ class TMTree:
         (0, 100, 100, 100)
         """
         if factor >= 0:
-            change = math.ceil(self.data_size*factor)
+            change = math.ceil(self.data_size * factor)
         else:
-            change = math.floor(self.data_size*factor)
+            change = math.floor(self.data_size * factor)
         self.data_size += change
         data_size_sum = 0
         for subtree in self._subtrees:
@@ -928,6 +929,18 @@ class FileTree(TMTree):
             raise OperationNotSupportedError
         else:
             TMTree.move(self, destination)
+
+    def _get_path_string_helper(self, string: str = "") -> str:
+        """
+        Helper method for get_path_string that returns a mutation of <string>
+        """
+        if string == "":
+            string += f"{self._name} (file)"
+        else:
+            string = f"{self._name}{os.path.sep}" + string
+        if self._parent_tree is not None:
+            string = self._parent_tree._get_path_string_helper(string)
+        return string
 
 
 class DirectoryTree(TMTree):
@@ -1011,22 +1024,19 @@ class DirectoryTree(TMTree):
     True
     """
     # Hint: you should only have to write a fairly small amount of code here.
-    def __str__(self, string: str = "", indent: int = 0) -> str:
+    def __str__(self, string: str = "", indent: int = 1) -> str:
         tab = "    "
         if string == "":
-            string = f"{indent * tab}{self._name}/" \
-                     f"({self.data_size}) {self.rect}"
+            string = f"{self._name}/({self.data_size}) {self.rect}"
         for subtree in self._subtrees:
-            if isinstance(subtree, DirectoryTree):
-                string += f"\n{indent * tab}{subtree._name}/" \
-                          f"({subtree.data_size}) {subtree.rect}"
-            else:
-                string += f"\n{indent * tab}{subtree._name}" \
-                          f"({subtree.data_size}) {subtree.rect}"
+            slash = ''
+            if isinstance(subtree, DirectoryTree) and subtree._subtrees:
+                slash = os.path.sep
+            string += f"\n{indent * tab}{subtree._name}{slash}" \
+                      f"({subtree.data_size}) {subtree.rect}"
             if subtree._subtrees:
                 string = DirectoryTree.__str__(subtree, string,
                                                indent + 1)
-        string.replace("/", os.path.sep)
         return string
 
     def change_size(self, factor: float) -> None:
@@ -1038,6 +1048,20 @@ class DirectoryTree(TMTree):
         else:
             TMTree.move(self, destination)
 
+    def _get_path_string_helper(self, string: str = "") -> str:
+        """
+        Helper method for get_path_string that returns a mutation of <string>
+        """
+        if string == "":
+            string += f"{self._name} (directory)"
+        else:
+            string = f"{self._name}{os.path.sep}" + string
+        if self._parent_tree is not None:
+            string = self._parent_tree._get_path_string_helper(string)
+        return string
+
+
+
 
 class ChessTree(TMTree):
     """
@@ -1047,9 +1071,6 @@ class ChessTree(TMTree):
     # _white_to_play: True iff it is white's turn to make the next move.
 
     _white_to_play: bool
-
-    # TODO: (Task 6) complete the implementation of this class, including
-    #       extending or overriding any methods inherited from TMTree.
 
     def __init__(self, move_dict: dict[tuple[str, int], dict],
                  last_move: str = "-",
@@ -1120,11 +1141,6 @@ class ChessTree(TMTree):
             return ' (white to play)'
         else:
             return ' (black to play)'
-
-        # TODO: (Task 6) Implement this method
-
-    # def is_displayed_tree_leaf(self) -> bool:
-    #     if self.
 
     def open_page(self) -> None:
         """
