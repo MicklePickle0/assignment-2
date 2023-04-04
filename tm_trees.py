@@ -508,17 +508,16 @@ class TMTree:
             sizey = rect[3]
             if sizex > sizey:
                 for subtree in subtrees:
-                    subtree.update_rectangles(tuple([coord1, coord2, int(sizex
-                                                    * (subtree.data_size
-                                                       / count)), sizey]))
-                    coord1 += int(sizex * (subtree.data_size / count))
+                    subtree.update_rectangles(tuple([coord1, coord2, math.floor(
+                        sizex * subtree.data_size / count), sizey]))
+                    coord1 += math.floor(sizex * subtree.data_size / count)
             else:
                 for subtree in subtrees:
                     subtree.update_rectangles(tuple([coord1, coord2, sizex,
-                                                     int(sizey
-                                                         * (subtree.data_size
-                                                            / count))]))
-                    coord2 += int(sizey * (subtree.data_size / count))
+                                                    math.floor(sizey *
+                                                               subtree.data_size
+                                                               / count)]))
+                    coord2 += math.floor(sizey * subtree.data_size / count)
 
     def get_rectangles(self) -> list[tuple[tuple[int, int, int, int],
                                            tuple[int, int, int]]]:
@@ -601,11 +600,6 @@ class TMTree:
 
             return self
 
-    # TODO: (Task 4) Write the bodies of methods expand, expand_all, collapse,
-    #       collapse_all, move, change_size, and test the displayed-tree
-    #       functionality for the methods from Tasks 2 and 3 if you haven't
-    #       done so yet, since you can now expand and collapse the
-    #       displayed-tree.
     def expand(self) -> TMTree:
         """
         Set this tree to be expanded, and return its first (leftmost) subtree.
@@ -906,7 +900,7 @@ class TMTree:
 # subclasses of TMTree
 ######################
 
-# TODO: (Task 5) make this class inherit from another class
+
 class FileTree(TMTree):
     """
     A tree representation of a file in a file system, for use with our
@@ -923,18 +917,11 @@ class FileTree(TMTree):
     See the class docstring for DirectoryTree for detailed doctest examples
     demonstrating the expected behaviour.
 
-    TODO: (Task 5)
-         Implement FileTree and DirectoryTree so that they are consistent
-         with DirectoryTree's docstring examples, as well as the behaviour
-         specified in the handout. You are free to reorder the definition of
-         these two classes or add another class as you see fit.
-
     Important: Since you are free to implement these subclasses, we will only
          create instances of them through calls to
          dir_tree_from_nested_tuple, so please make sure to implement
          that function correctly.
     """
-    # TODO: (Task) 5 override or extend any methods as needed
     # Hint: you should only have to write a fairly small amount of code here.
     def move(self, destination: TMTree) -> None:
         if isinstance(destination, FileTree):
@@ -943,7 +930,6 @@ class FileTree(TMTree):
             TMTree.move(self, destination)
 
 
-# TODO: (Task 5) make this class inherit from another class
 class DirectoryTree(TMTree):
     """A tree representation of a directory in a file system for use with
     our treemap visualizer.
@@ -962,12 +948,6 @@ class DirectoryTree(TMTree):
 
     The _name attribute stores the *name* of the file, not its full
     path.
-
-    TODO: (Task 5)
-         Implement FileTree and DirectoryTree so that they are consistent
-         with DirectoryTree's docstring examples, as well as the behaviour
-         specified in the handout. You are free to reorder the definition of
-         these two classes or add another class as you see fit.
 
     Important: Since you are free to implement these subclasses, we will only
          create instances of them through calls to
@@ -1030,9 +1010,6 @@ class DirectoryTree(TMTree):
     >>> path_string == './empty_dir/data.xlsx (file)'.replace("/", os.path.sep)
     True
     """
-    # TODO: (Task 5) override or extend any methods that you need to from the
-    #  parent class, based on the docstring examples AND any behaviour
-    #  specified in the handout.
     # Hint: you should only have to write a fairly small amount of code here.
     def __str__(self, string: str = "", indent: int = 0) -> str:
         tab = "    "
@@ -1111,7 +1088,15 @@ class ChessTree(TMTree):
             e2e4 | (1) None
                 e7e5(1) None
         """
-        # TODO: (Task 6) Implement this method
+        self._white_to_play = white_to_play
+        subtrees = []
+        for key, value in move_dict.items():
+            if value == {}:
+                subtrees.append(TMTree(key[0], [], key[1]))
+            else:
+                child_tree = ChessTree(value, key[0], not white_to_play, key[1])
+                subtrees.append(child_tree)
+        TMTree.__init__(self, last_move, subtrees, num_games_ended)
 
     def get_suffix(self) -> str:
         """
@@ -1129,7 +1114,17 @@ class ChessTree(TMTree):
         >>> second_last_node.get_suffix()
         ' (black to play)'
         """
+        if not self._subtrees:
+            return ' (end)'
+        if self._white_to_play:
+            return ' (white to play)'
+        else:
+            return ' (black to play)'
+
         # TODO: (Task 6) Implement this method
+
+    # def is_displayed_tree_leaf(self) -> bool:
+    #     if self.
 
     def open_page(self) -> None:
         """
